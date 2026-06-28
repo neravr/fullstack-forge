@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fullstack-forge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fullstack-forge
+  template:
+    metadata:
+      labels:
+        app: fullstack-forge
+    spec:
+      containers:
+      - name: fullstack-forge
+        image: fullstackforgeacr.azurecr.io/fullstack-forge:v1
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fullstack-forge
+spec:
+  type: LoadBalancer
+  selector:
+    app: fullstack-forge
+  ports:
+  - port: 80
+    targetPort: 8080
