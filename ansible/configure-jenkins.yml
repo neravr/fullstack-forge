@@ -1,0 +1,27 @@
+---
+- name: Configure Jenkins container
+  hosts: localhost
+  connection: local
+  become: yes
+
+  tasks:
+    - name: Ensure Docker is installed
+      command: docker --version
+      register: docker_check
+      changed_when: false
+
+    - name: Ensure Azure CLI is installed
+      command: az --version
+      register: az_check
+      changed_when: false
+
+    - name: Ensure kubectl is installed
+      command: kubectl version --client
+      register: kubectl_check
+      changed_when: false
+
+    - name: Print tool versions
+      debug:
+        msg:
+          - "Docker: {{ docker_check.stdout_lines[0] }}"
+          - "kubectl: {{ kubectl_check.stdout_lines[0] }}"
