@@ -1,0 +1,27 @@
+---
+- name: Configure AKS nodes
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Get AKS nodes
+      command: kubectl get nodes -o jsonpath='{.items[*].metadata.name}'
+      register: nodes
+      changed_when: false
+
+    - name: Print node names
+      debug:
+        msg: "Found nodes: {{ nodes.stdout }}"
+
+    - name: Label AKS nodes
+      command: kubectl label node {{ item }} environment=production --overwrite
+      loop: "{{ nodes.stdout.split(' ') }}"
+
+    - name: Verify labels
+      command: kubectl get nodes --show-labels
+      register: node_labels
+      changed_when: false
+
+    - name: Print labels
+      debug:
+        msg: "{{ node_labels.stdout_lines }}"
